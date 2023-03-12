@@ -6,17 +6,17 @@ import java.util.stream.LongStream;
 
 public class MyTask extends RecursiveTask<Long> {
     private final int startPoint;
-    private final int finishPoint;
+    private final int endPoint;
 
-    public MyTask(int startPoint, int finishPoint) {
+    public MyTask(int startPoint, int endPoint) {
         this.startPoint = startPoint;
-        this.finishPoint = finishPoint;
+        this.endPoint = endPoint;
     }
 
     @Override
     protected Long compute() {
         long result = 0;
-        if (finishPoint - startPoint > 10) {
+        if (endPoint - startPoint > 10) {
             List<RecursiveTask<Long>> subTasks = createSubTasks();
             for (RecursiveTask<Long> subTask : subTasks) {
                 subTask.fork();
@@ -24,13 +24,13 @@ public class MyTask extends RecursiveTask<Long> {
             }
             return result;
         } else {
-            return LongStream.range(startPoint, finishPoint).sum();
+            return LongStream.range(startPoint, endPoint).sum();
         }
     }
 
     private List<RecursiveTask<Long>> createSubTasks() {
-        int nextPoint = startPoint + (finishPoint - startPoint) / 2;
+        int nextPoint = startPoint + (endPoint - startPoint) / 2;
         return List.of(new MyTask(startPoint, nextPoint),
-                new MyTask(nextPoint, finishPoint));
+                new MyTask(nextPoint, endPoint));
     }
 }
